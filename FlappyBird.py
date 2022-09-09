@@ -1,8 +1,8 @@
+from ast import Await
+from tracemalloc import start
 import pygame
 import os
 import random
-
-from FlappyBird import TELA_LARGURA
 
 TELA_LARGURA = 400
 TELA_ALTURA = 700
@@ -180,6 +180,16 @@ def main():
     
     rodando = True
     
+    desenhar_tela(tela, passaros, canos, chao, pontos)
+    start_loop = True
+    
+    while start_loop:
+        for evento in pygame.event.get():
+            if evento.type == pygame.KEYDOWN:
+                if evento.key == pygame.K_w or pygame.K_UP:
+                    start_loop = False
+                else: start_loop = True
+    
     while rodando:
         relogio.tick(30)
         #interagindo
@@ -189,7 +199,7 @@ def main():
                 pygame.quit()
                 quit()
             if evento.type == pygame.KEYDOWN:
-                if evento.key == pygame.K_UP:
+                if evento.key == pygame.K_UP or pygame.K_w:
                     for passaro in passaros:
                         passaro.pular()
         #movendo as coisas
@@ -204,6 +214,7 @@ def main():
             for i, passaro in enumerate(passaros):
                 if cano.colidir(passaro):
                     passaros.pop(i)
+                    main()
                 if not cano.passou and passaro.x > cano.x:
                     cano.passou = True
                     adicionar_canos = True
@@ -220,7 +231,6 @@ def main():
             if (passaro.y + passaro.imagem.get_height()) > chao.y or passaro.y < 0:
                 passaros.pop(i)
                 
-        desenhar_tela(tela, passaros, canos, chao, pontos)
-        
+        desenhar_tela(tela, passaros, canos, chao, pontos)              
 if __name__ == '__main__':
     main()
